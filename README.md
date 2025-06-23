@@ -1,7 +1,3 @@
-Here is a **paraphrased and polished version** of your project summary and setup instructions, formatted in professional **README.md** style for GitHub:
-
----
-
 #  EthioMart: Amharic Named Entity Recognition for Telegram E-Commerce
 
 ## Project Overview
