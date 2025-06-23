@@ -1,17 +1,21 @@
-# data_collection/telegram_data_collector.py
+# src/telegram_data_collector.py
 import os
 import json
 import pandas as pd
 from pyrogram import Client
 from datetime import datetime
 import logging
+import sys
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# Load credentials from telegram_auth_setup.py
-from auth.telegram_auth_setup import fetch_api_credentials
+# Add src to Python path to resolve module imports
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+# Load credentials from login.py
+from src.login import fetch_api_credentials
 API_ID, API_HASH = fetch_api_credentials()
 
 # Define target e-commerce channels
@@ -28,8 +32,12 @@ def collect_telegram_data():
     Collects messages from specified Telegram channels and saves them in JSON and CSV formats.
     """
     # Initialize Pyrogram client
-    app = Client("ethio_ecommerce_bot", api_id=API_ID, api_hash=API_HASH)
-    
+    try:
+        app = Client("ethio_ecommerce_bot", api_id=API_ID, api_hash=API_HASH)
+    except ValueError as e:
+        logger.error(f"Failed to initialize Client: {e}")
+        return
+
     collected_data = []
     
     with app:
@@ -39,7 +47,7 @@ def collect_telegram_data():
                 chat_details = app.get_chat(channel_name)
                 channel_name_display = chat_details.title
                 
-                for msg in app.get_chat_history(channel_name, limit=500):  # Increased limit for more data
+                for msg in app.get_chat_history(channel_name, limit=500):
                     msg_content = msg.text or msg.caption or ""
                     if not msg_content.strip():
                         continue  # Skip empty messages

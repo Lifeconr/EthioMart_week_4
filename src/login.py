@@ -1,4 +1,4 @@
-# auth/telegram_auth_setup.py
+# src/login.py
 from dotenv import load_dotenv
 import os
 
